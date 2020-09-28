@@ -74,7 +74,31 @@ ny_subway =
   read.csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
   select(-division, -staffing, -staff_hours, -entrance_longitude, -entrance_latitude, -entrance_location, -station_location, -corner, -east_west_street, -north_south_street, -free_crossover, -ada_notes) %>% 
-  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) 
+  
 ```
 
 This dataset contains the following variables `r names(ny_subway)`.  I retain exit_only variable as well because consequent problems might need this variable.  After importing the dataset, I clean names to make column names be of the same format and remove columns irrelevant to the problem.  Additionally, I convert the entry variable from character to a logical variable.  The dimension of the resulting data has `r nrow(ny_subway)` rows and `r ncol(ny_subway)` columns.
+
+* There are `r nrow(distinct(ny_subway, line, station_name))` distinct stations.  
+
+```{r}
+distinct_station = 
+  distinct(ny_subway, line, station_name, ada, .keep_all = TRUE)
+```
+
+* `r sum(pull(distinct_station, ada))` stations are ADA compliant.
+
+```{r}
+ny_subway =
+  mutate(ny_subway, vending = recode(vending, "YES" = TRUE, "NO" = FALSE))
+
+no_vending =
+  filter(ny_subway, vending == TRUE)
+no_vending_num = sum(pull(no_vending, vending))
+
+allow_entrance =
+  sum(pull(no_vending, entry))
+```
+
+
