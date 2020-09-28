@@ -1,5 +1,5 @@
 ---
-title: "Data Impoert"
+title: "P8105 HW2 hl3439"
 author: Hanyu Lu
 output: github_document
 ---
@@ -67,3 +67,14 @@ left_join(precip_df, month_df, by = "month")
 
 This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, include some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` rows in our final dataset. Additional data sheets include month precipitation data. 
 
+## Problem 2
+
+```{r}
+ny_subway = 
+  read.csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>% 
+  select(-division, -staffing, -staff_hours, -entrance_longitude, -entrance_latitude, -entrance_location, -station_location, -corner, -east_west_street, -north_south_street, -free_crossover, -ada_notes) %>% 
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
+```
+
+This dataset contains the following variables `r names(ny_subway)`.  I retain exit_only variable as well because consequent problems might need this variable.  After importing the dataset, I clean names to make column names be of the same format and remove columns irrelevant to the problem.  Additionally, I convert the entry variable from character to a logical variable.  The dimension of the resulting data has `r nrow(ny_subway)` rows and `r ncol(ny_subway)` columns.
