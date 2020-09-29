@@ -143,6 +143,9 @@ A_station_ada_num = nrow(A_station_ada)
 There are `r A_station_num` distinct stations serve the A train.  Of the stations that serve the A train, `r A_station_ada_num` are ADA compliant
 
 ## Problem 3
+
+First, tidy all three datastes.
+
 ```{r}
 pols_month_df = 
   read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -159,7 +162,8 @@ snp_df = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>%
     month = month.abb[as.factor(month)],
    ) %>% 
   arrange(year, month) %>% 
-  relocate(year, month)
+  relocate(year, month) %>% 
+  select(-day)
   
 
 unemployment_df = 
@@ -168,11 +172,23 @@ unemployment_df =
     Jan:Dec,
     names_to = "month",
     values_to = "unemployment"
+  )  %>% 
+  mutate(
+    Year = as.character(Year)
   )
+  
+colnames(unemployment_df)[1] <- "year"
+  
 
 ```
 
-```{r}
+Then merge three datasets into one.
 
+```{r}
+five_thirty_eight_df =
+  left_join(pols_month_df, snp_df, by = c("year","month"))
+
+five_thirty_eight_df =
+  left_join(five_thirty_eight_df, unemployment_df, by = c("year","month"))
 ```
 
