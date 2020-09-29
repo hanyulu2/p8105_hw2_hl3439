@@ -192,3 +192,4 @@ five_thirty_eight_df =
   left_join(five_thirty_eight_df, unemployment_df, by = c("year","month"))
 ```
 
+* pols-month.csv contains the following variables: `r names(pols_month_df)`.  snp.csv contains the following variables: `r names(snp_df)`.  unemployment.csv contains `r names(unemployment_df)`.  In order to join three data frames with year and month variables,  I use pivot_longer to combine columns of month names into one month column in unemployment dataset.  Additionally, I separate the date columns in pols-month and snp datasets into months and dates.  With the same format of month and year, I can merge these datasets. In the resulting dataset, there are `r nrow(five_thirty_eight_df)` rows and `r ncol(five_thirty_eight_df)` columns.  Range of years is from 1947 to 2015, which is `r 2015-1947+1` years.  This dataset contains the following variables: `r names(five_thirty_eight_df)`.
