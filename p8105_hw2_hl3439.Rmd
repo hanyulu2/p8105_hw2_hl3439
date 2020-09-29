@@ -73,12 +73,12 @@ This dataset contains information from the Mr. Trashwheel trash collector in Bal
 ny_subway = 
   read.csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
-  select(-division, -staffing, -staff_hours, -entrance_longitude, -entrance_latitude, -entrance_location, -station_location, -corner, -east_west_street, -north_south_street, -free_crossover, -ada_notes) %>% 
+  select(-division, -staffing, -staff_hours, -entrance_longitude, -entrance_latitude, -entrance_location, -station_location, -corner, -east_west_street, -north_south_street, -free_crossover, -ada_notes, -exit_only) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) 
   
 ```
 
-This dataset contains the following variables `r names(ny_subway)`.  I retain exit_only variable as well because consequent problems might need this variable.  After importing the dataset, I clean names to make column names be of the same format and remove columns irrelevant to the problem.  Additionally, I convert the entry variable from character to a logical variable.  The dimension of the resulting data has `r nrow(ny_subway)` rows and `r ncol(ny_subway)` columns.
+This dataset contains the following variables `r names(ny_subway)`.  After importing the dataset, I clean names to make column names be of the same format and remove columns irrelevant to the problem.  Additionally, I convert the entry variable from character to a logical variable.  The dimension of the resulting data has `r nrow(ny_subway)` rows and `r ncol(ny_subway)` columns.
 
 * There are `r nrow(distinct(ny_subway, line, station_name))` distinct stations.  
 
@@ -93,12 +93,26 @@ distinct_station =
 ny_subway =
   mutate(ny_subway, vending = recode(vending, "YES" = TRUE, "NO" = FALSE))
 
-no_vending =
-  filter(ny_subway, vending == TRUE)
-no_vending_num = sum(pull(no_vending, vending))
+no_vending_entrance =
+  filter(ny_subway, vending == FALSE)
+no_vending_num = nrow(no_vending_entrance)
 
 allow_entrance =
-  sum(pull(no_vending, entry))
+  sum(pull(no_vending_entrance, entry))
 ```
 
+* `r allow_entrance/no_vending_num` of station entrances / exits without vending allow entrance.
+
+```{r}
+ny_subway =
+  mutate(ny_subway, type_convert(route1))
+
+ny_subway_tidy = 
+  pivot_longer(
+    ny_subway,
+    route1:route11,
+    names_to = "route_number",
+    values_to = "route_name"
+  )
+```
 
