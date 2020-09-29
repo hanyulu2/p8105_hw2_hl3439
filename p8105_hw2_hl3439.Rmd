@@ -144,8 +144,35 @@ There are `r A_station_num` distinct stations serve the A train.  Of the station
 
 ## Problem 3
 ```{r}
-pols_month_df = read_csv("./data/fivethirtyeight_datasets/pols-month.csv")
-unemployment_df = read_csv("./data/fivethirtyeight_datasets/unemployment.csv")
-snp_df = read_csv("./data/fivethirtyeight_datasets/snp.csv")
+pols_month_df = 
+  read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  separate(mon, sep="-", into = c("year", "month", "day")) %>% 
+  mutate(
+    month = month.abb[as.factor(month)],
+    president = case_when(prez_gop == "1" ~ "gop", prez_gop == "0" ~ "dem")
+  )  %>% 
+  select(-prez_gop, -prez_dem, -day) 
+
+snp_df = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  separate(date, sep="/", into = c("month", "day", "year")) %>% 
+  mutate(
+    month = month.abb[as.factor(month)],
+   ) %>% 
+  arrange(year, month) %>% 
+  relocate(year, month)
+  
+
+unemployment_df = 
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment"
+  )
+
+```
+
+```{r}
+
 ```
 
